@@ -1,13 +1,13 @@
+import { Head } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
 
 export default function Dashboard() {
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
+                    Report
                 </h2>
             }
         >
@@ -41,7 +41,7 @@ export default function Dashboard() {
 
                 <Dropdown.Content>
                     <Dropdown.Link
-                        href={route('report.index')}
+                        href={route('profile.edit')}
                     >
                         Report
                     </Dropdown.Link>
@@ -60,7 +60,7 @@ export default function Dashboard() {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            You're logged in!
+                            This is Report Page
                         </div>
                     </div>
                 </div>
