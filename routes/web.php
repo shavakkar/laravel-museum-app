@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Foundation\Application;
@@ -14,6 +15,20 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::post('/enquiry', [EnquiryController::class, 'store']);
+});
+
+// Route::middleware(['auth', 'role:sub-admin'])->group(function () {
+//     Route::get('/subadmin/dashboard', [SubAdminController::class, 'index']);
+// });
+
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
+    Route::get('/admin/enquiries', [EnquiryController::class, 'index']);
+});
+
+
 
 Route::get('/report', function () {
     return Inertia::render('User/Report');
