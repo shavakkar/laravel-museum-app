@@ -41,9 +41,9 @@ export default function Dashboard() {
 
                 <Dropdown.Content>
                     <Dropdown.Link
-                        href=""
+                        href={route('admin.index')}
                     >
-                        Report
+                        Admins
                     </Dropdown.Link>
                     <Dropdown.Link
                         href={route('logout')}

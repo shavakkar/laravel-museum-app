@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -23,6 +23,12 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('/admin', [AdminController::class, 'store'])->name('admin.store');
     Route::delete('/admin/{user}', [AdminController::class, 'destroy'])->name('admin.destroy');
 });
+
+Route::get('/enquiry',  function () {
+    return Inertia::render('User/Enquiry');
+})->name('user.enquiry');
+Route::post('/enquiry', [EnquiryController::class, 'store']);
+// Route::get('/enquiry', [EnquiryController::class, 'create']);
 
 // Route::get('/report', function () {
 //     return Inertia::render('User/Report');

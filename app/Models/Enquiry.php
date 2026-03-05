@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Enquiry extends Model
 {
     use HasFactory; 
-    protected $fillable = ['user_id', 'message']; 
+    protected $fillable = ['user_id', 'message', 'email']; 
     public function user() { 
         return $this->belongsTo(User::class); 
     }

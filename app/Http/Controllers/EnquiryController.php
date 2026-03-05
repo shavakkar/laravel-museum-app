@@ -29,11 +29,24 @@ class EnquiryController extends Controller
         return redirect()->back()->with('success', 'Enquiry deleted successfully');
     }
 
-    public function store(Request $request) { 
-        $request->validate([ 'message' => 'required|string|max:1000', ]); 
-        Enquiry::create([ 'user_id' => Auth::id(), 'message' => $request->message, ]); 
-        return response()->json(['success' => true, 'message' => 'Enquiry submitted successfully']); 
-    } 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string|max:1000',
+            'email' => Auth::check() ? 'nullable|email' : 'required|email',
+        ]);
+    
+        Enquiry::create([
+            'user_id' => Auth::id(), // null if guest
+            'email'   => Auth::check() ? Auth::user()->email : $request->email,
+            'message' => $request->message,
+        ]);
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Enquiry submitted successfully'
+        ]);
+    }
         
     // Super admin views all enquiries 
     // public function index() { 
