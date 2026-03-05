@@ -9,12 +9,6 @@ use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
-    // Only super-admin can access this controller
-    public function __construct()
-    {
-        $this->middleware('role:super-admin');
-    }
-
     // Show all sub-admins
     public function index()
     {
