@@ -24,6 +24,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::delete('/admin/{user}', [AdminController::class, 'destroy'])->name('admin.destroy');
 
     Route::get('/admin/enquiries', [EnquiryController::class, 'index'])->name('admin.enquiries.index');
+    Route::delete('/admin/enquiries/{enquiry}', [EnquiryController::class, 'destroy'])->name('admin.enquiries.destroy');
 });
 
 Route::get('/enquiry',  function () {

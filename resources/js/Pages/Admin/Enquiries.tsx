@@ -1,6 +1,12 @@
-import React from 'react';
+import { useForm } from '@inertiajs/react';
 
 export default function Enquiries({ enquiries } : any) {
+  const { delete: destroy } = useForm();
+
+  const handleDelete = (id: number) => {
+    destroy(`/admin/enquiries/${id}`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow rounded">
       <h1 className="text-2xl font-bold mb-6">All Enquiries</h1>
@@ -12,6 +18,7 @@ export default function Enquiries({ enquiries } : any) {
             <th className="border p-2">Message</th>
             <th className="border p-2">Linked User</th>
             <th className="border p-2">Submitted At</th>
+            <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -25,6 +32,14 @@ export default function Enquiries({ enquiries } : any) {
               </td>
               <td className="border p-2">
                 {new Date(enquiry.created_at).toLocaleString()}
+              </td>
+              <td className="border p-2">
+                <button
+                  onClick={() => handleDelete(enquiry.id)}
+                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
