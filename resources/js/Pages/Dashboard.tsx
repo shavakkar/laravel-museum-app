@@ -41,17 +41,17 @@ export default function Dashboard() {
 
                 <Dropdown.Content>
                     <Dropdown.Link
-                        href={route('report.index')}
+                        href=""
                     >
                         Report
                     </Dropdown.Link>
-                    {/* <Dropdown.Link
+                    <Dropdown.Link
                         href={route('logout')}
                         method="post"
                         as="button"
                     >
                         Log Out
-                    </Dropdown.Link> */}
+                    </Dropdown.Link>
                 </Dropdown.Content>
             </Dropdown>
             </div>
