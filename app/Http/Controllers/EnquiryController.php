@@ -11,9 +11,10 @@ class EnquiryController extends Controller
 {
     public function index()
     {
-        $this->authorize('viewAny', Enquiry::class);
+        $enquiries = Enquiry::with('user')->latest()->get();
+
         return inertia('Admin/Enquiries', [
-            'enquiries' => Enquiry::with('user')->latest()->get(),
+            'enquiries' => $enquiries,
         ]);
     }
 

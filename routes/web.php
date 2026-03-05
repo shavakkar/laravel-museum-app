@@ -22,6 +22,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::post('/admin', [AdminController::class, 'store'])->name('admin.store');
     Route::delete('/admin/{user}', [AdminController::class, 'destroy'])->name('admin.destroy');
+
+    Route::get('/admin/enquiries', [EnquiryController::class, 'index'])->name('admin.enquiries.index');
 });
 
 Route::get('/enquiry',  function () {
