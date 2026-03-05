@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enquiry;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,20 +34,33 @@ class EnquiryController extends Controller
     {
         $request->validate([
             'message' => 'required|string|max:1000',
-            'email' => Auth::check() ? 'nullable|email' : 'required|email',
+            'email'   => Auth::check() ? 'nullable|email' : 'required|email',
         ]);
     
-        Enquiry::create([
-            'user_id' => Auth::id(), // null if guest
-            'email'   => Auth::check() ? Auth::user()->email : $request->email,
+        $email   = Auth::check() ? Auth::user()->email : $request->email;
+        $userId  = Auth::id();
+    
+        // Try to auto-link guest enquiry to existing user by email
+        if (!$userId) {
+            $existingUser = User::where('email', $email)->first();
+            if ($existingUser) {
+                $userId = $existingUser->id;
+            }
+        }
+    
+        $enquiry = Enquiry::create([
+            'user_id' => $userId,   // may be null if guest and no match
+            'email'   => $email,
             'message' => $request->message,
         ]);
     
         return response()->json([
             'success' => true,
-            'message' => 'Enquiry submitted successfully'
+            'message' => 'Enquiry submitted successfully',
+            'userId'  => $enquiry->user_id, // return what was actually stored
         ]);
     }
+
         
     // Super admin views all enquiries 
     // public function index() { 

@@ -1,25 +1,20 @@
-import React, { useState } from 'react';
-import { usePage } from '@inertiajs/react';
-import axios from 'axios';
+import React from 'react';
+import { useForm, usePage } from '@inertiajs/react';
 
 const Enquiry: React.FC = () => {
-  const { props } = usePage(); 
+  const { props } = usePage();
   const user = props.auth?.user;
 
-  const [email, setEmail] = useState(user ? user.email : '');
-  const [message, setMessage] = useState('');
-  const [status, setStatus] = useState<string | null>(null);
+  const { data, setData, post, reset, processing, errors } = useForm({
+    email: user ? user.email : '',
+    message: '',
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await axios.post('/enquiry', { message, email });
-      setStatus('Enquiry submitted successfully!');
-      setMessage('');
-      if (!user) setEmail('');
-    } catch {
-      setStatus('Failed to submit enquiry.');
-    }
+    post('/enquiry', {
+      onSuccess: () => reset('message', 'email'),
+    });
   };
 
   return (
@@ -30,34 +25,39 @@ const Enquiry: React.FC = () => {
           <input
             type="email"
             placeholder="Your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={data.email}
+            onChange={(e) => setData('email', e.target.value)}
             className="w-full border rounded p-2 mb-4"
           />
         )}
         {user && (
           <input
             type="email"
-            value={email}
+            value={data.email}
             disabled
             className="w-full border rounded p-2 mb-4 bg-gray-100"
           />
         )}
+
+        {errors.email && <p className="text-red-600">{errors.email}</p>}
+
         <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={data.message}
+          onChange={(e) => setData('message', e.target.value)}
           className="w-full border rounded p-2 mb-4"
           rows={5}
           placeholder="Enter your enquiry..."
         />
+        {errors.message && <p className="text-red-600">{errors.message}</p>}
+
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          disabled={processing}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
-          Submit
+          {processing ? 'Submitting...' : 'Submit'}
         </button>
       </form>
-      {status && <p className="mt-4 text-green-600">{status}</p>}
     </div>
   );
 };
