@@ -17,29 +17,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::post('/enquiry', [EnquiryController::class, 'store']);
-    Route::get('/enquiry', [EnquiryController::class, 'create']);
-});
-
-Route::middleware(['auth', 'role:super-admin'])->group(function () {
-    Route::get('/admin/enquiries', [EnquiryController::class, 'index']);
-    Route::delete('/admin/enquiries/{enquiry}', [EnquiryController::class, 'destroy']);
-});
-
-
-Route::middleware(['auth', 'role:super-admin'])->group(function () { 
-    // Page to show form 
-    Route::get('/admin/subadmins/create', [SubAdminController::class, 'create']); 
-    // Handle form submission 
-    Route::post('/admin/subadmins', [SubAdminController::class, 'store']); }); 
-
-    Route::middleware(['auth', 'role:sub-admin'])->group(function () { 
-        Route::get('/subadmin/dashboard', [SubAdminController::class, 'dashboard']); 
-    }
-);
-
-
 // Route::get('/report', function () {
 //     return Inertia::render('User/Report');
 // })->middleware(['auth'])->name('report.user');
