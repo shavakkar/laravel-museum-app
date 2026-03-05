@@ -61,11 +61,4 @@ class EnquiryController extends Controller
             'userId'  => $enquiry->user_id, // return what was actually stored
         ]);
     }
-
-        
-    // Super admin views all enquiries 
-    // public function index() { 
-    //     $this->authorize('viewAny', Enquiry::class); 
-    //     return response()->json(Enquiry::with('user')->latest()->get()); 
-    // }
 }

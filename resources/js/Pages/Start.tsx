@@ -1,17 +1,39 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function Welcome({ auth } : any) {
   const { data, setData, post, processing, errors } = useForm({
-    colour: '',
+    location: '',
     number: '',
     email: auth.user ? auth.user.email : '',
     otp: '',
   });
 
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+
+  const sendOtp = async () => {
+    try {
+      await axios.post('/app/send-otp', { email: data.email });
+      setOtpSent(true);
+    } catch {
+      alert('Failed to send OTP');
+    }
+  };
+
+  const verifyOtp = async () => {
+    try {
+      await axios.post('/app/verify-otp', { otp: data.otp });
+      setOtpVerified(true);
+    } catch {
+      alert('Invalid OTP');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post('/app'); 
+    post('/app');
   };
 
   return (
@@ -21,75 +43,76 @@ export default function Welcome({ auth } : any) {
         <div className="w-full max-w-md bg-white shadow rounded p-6">
           <h1 className="text-xl font-bold mb-4 text-center">Welcome Form</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Colour input */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Colour</label>
-              <input
-                type="text"
-                value={data.colour}
-                onChange={(e) => setData('colour', e.target.value)}
-                className="w-full border rounded p-2"
-                placeholder="Type a colour..."
-              />
-              {errors.colour && <p className="text-red-600">{errors.colour}</p>}
-            </div>
+            {/* location input */}
+            <input
+              type="text"
+              value={data.location}
+              onChange={(e) => setData('location', e.target.value)}
+              className="w-full border rounded p-2"
+              placeholder="Type a location..."
+            />
 
             {/* Number input */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Number</label>
-              <input
-                type="number"
-                value={data.number}
-                onChange={(e) => setData('number', e.target.value)}
-                className="w-full border rounded p-2"
-                placeholder="Enter a number..."
-              />
-              {errors.number && <p className="text-red-600">{errors.number}</p>}
-            </div>
+            <input
+              type="number"
+              value={data.number}
+              onChange={(e) => setData('number', e.target.value)}
+              className="w-full border rounded p-2"
+              placeholder="Enter a number..."
+            />
 
             {/* Email + OTP */}
             {auth.user ? (
-              <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                type="email"
+                value={data.email}
+                disabled
+                className="w-full border rounded p-2 bg-gray-100"
+              />
+            ) : (
+              <>
                 <input
                   type="email"
                   value={data.email}
-                  disabled
-                  className="w-full border rounded p-2 bg-gray-100"
+                  onChange={(e) => setData('email', e.target.value)}
+                  className="w-full border rounded p-2"
+                  placeholder="Enter your email..."
                 />
-              </div>
-            ) : (
-              <>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    className="w-full border rounded p-2"
-                    placeholder="Enter your email..."
-                  />
-                  {errors.email && <p className="text-red-600">{errors.email}</p>}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">OTP</label>
-                  <input
-                    type="text"
-                    value={data.otp}
-                    onChange={(e) => setData('otp', e.target.value)}
-                    className="w-full border rounded p-2"
-                    placeholder="Enter OTP..."
-                  />
-                  {errors.otp && <p className="text-red-600">{errors.otp}</p>}
-                </div>
+                {!otpSent && (
+                  <button
+                    type="button"
+                    onClick={sendOtp}
+                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                  >
+                    Send OTP
+                  </button>
+                )}
+                {otpSent && !otpVerified && (
+                  <>
+                    <input
+                      type="text"
+                      value={data.otp}
+                      onChange={(e) => setData('otp', e.target.value)}
+                      className="w-full border rounded p-2 mt-2"
+                      placeholder="Enter OTP..."
+                    />
+                    <button
+                      type="button"
+                      onClick={verifyOtp}
+                      className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 mt-2"
+                    >
+                      Verify OTP
+                    </button>
+                  </>
+                )}
               </>
             )}
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={processing}
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+              disabled={processing || (!auth.user && !otpVerified)}
+              className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50"
             >
               {processing ? 'Submitting...' : 'Submit'}
             </button>

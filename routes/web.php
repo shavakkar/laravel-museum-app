@@ -5,18 +5,25 @@ use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubAdminController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home', [
+    return Inertia::render('Start', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+
+Route::post('/app/send-otp', [UserController::class, 'sendOtp'])->name('app.sendOtp');
+Route::post('/app/verify-otp', [UserController::class, 'verifyOtp'])->name('app.verifyOtp');
+Route::post('/app', [UserController::class, 'store'])->name('app.store');
+
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
