@@ -1,10 +1,9 @@
-import React from 'react';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 
-export default function Locations({ locations } : any) {
+export default function Locations({ locations }: any) {
   const { data, setData, post, reset } = useForm({ name: '', locality: '', district: '', city: '', state: '' });
 
-  const handleSubmit = (e : any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     post('/admin/locations', {
       onSuccess: () => reset(),
@@ -68,7 +67,7 @@ export default function Locations({ locations } : any) {
           </tr>
         </thead>
         <tbody>
-          {locations.map((c : any) => (
+          {locations.map((c: any) => (
             <tr key={c.id}>
               <td className="border p-2">{c.name}</td>
               <td className="border p-2">{c.locality}</td>
@@ -76,10 +75,12 @@ export default function Locations({ locations } : any) {
               <td className="border p-2">{c.city}</td>
               <td className="border p-2">{c.state}</td>
               <td className="border p-2">
-                <form method="POST" action={`/admin/locations/${c.id}`} className="inline">
-                  <input type="hidden" name="_method" value="DELETE" />
-                  <button className="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
-                </form>
+                <button
+                  onClick={() => router.delete(`/admin/locations/${c.id}`)}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
