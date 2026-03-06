@@ -36,8 +36,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
     Route::get('/admin/locations', [LocationController::class, 'index'])->name('admin.locations.index');
     Route::post('/admin/locations', [LocationController::class, 'store'])->name('admin.locations.store');
-    Route::put('/admin/locations/{colour}', [LocationController::class, 'update'])->name('admin.locations.update');
-    Route::delete('/admin/locations/{colour}', [LocationController::class, 'destroy'])->name('admin.locations.destroy');
+    Route::put('/admin/locations/{location}', [LocationController::class, 'update'])->name('admin.locations.update');
+    Route::delete('/admin/locations/{location}', [LocationController::class, 'destroy'])->name('admin.locations.destroy');
 });
 
 Route::get('/enquiry',  function () {

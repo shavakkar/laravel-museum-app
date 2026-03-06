@@ -1,12 +1,26 @@
 import { router, useForm } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function Locations({ locations }: any) {
-  const { data, setData, post, reset } = useForm({ name: '', locality: '', district: '', city: '', state: '' });
+  const { data, setData, post, put, reset } = useForm({ name: '', locality: '', district: '', city: '', state: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editValues, setEditValues] = useState({ name: '', locality: '', district: '', city: '', state: '' });
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e : any) => {
     e.preventDefault();
     post('/admin/locations', {
       onSuccess: () => reset(),
+    });
+  };
+
+    const startEdit = (c : any) => {
+    setEditingId(c.id);
+    setEditValues({ name: c.name, locality: c.locality || '', district: c.district || '', city: c.city || '', state: c.state || '' });
+  };
+
+  const saveEdit = (id: number) => {
+    router.put(`/admin/locations/${id}`, editValues, {
+      onSuccess: () => setEditingId(null),
     });
   };
 
@@ -67,20 +81,100 @@ export default function Locations({ locations }: any) {
           </tr>
         </thead>
         <tbody>
-          {locations.map((c: any) => (
+          {locations.map((c : any) => (
             <tr key={c.id}>
-              <td className="border p-2">{c.name}</td>
-              <td className="border p-2">{c.locality}</td>
-              <td className="border p-2">{c.district}</td>
-              <td className="border p-2">{c.city}</td>
-              <td className="border p-2">{c.state}</td>
               <td className="border p-2">
-                <button
-                  onClick={() => router.delete(`/admin/locations/${c.id}`)}
-                  className="bg-red-600 text-white px-3 py-1 rounded"
-                >
-                  Delete
-                </button>
+                {editingId === c.id ? (
+                  <input
+                    type="text"
+                    value={editValues.name}
+                    onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
+                    className="w-full border rounded p-1"
+                  />
+                ) : (
+                  c.name
+                )}
+              </td>
+              <td className="border p-2">
+                {editingId === c.id ? (
+                  <input
+                    type="text"
+                    value={editValues.locality}
+                    onChange={(e) => setEditValues({ ...editValues, locality: e.target.value })}
+                    className="w-full border rounded p-1"
+                  />
+                ) : (
+                  c.locality
+                )}
+              </td>
+              <td className="border p-2">
+                {editingId === c.id ? (
+                  <input
+                    type="text"
+                    value={editValues.district}
+                    onChange={(e) => setEditValues({ ...editValues, district: e.target.value })}
+                    className="w-full border rounded p-1"
+                  />
+                ) : (
+                  c.district
+                )}
+              </td>
+              <td className="border p-2">
+                {editingId === c.id ? (
+                  <input
+                    type="text"
+                    value={editValues.city}
+                    onChange={(e) => setEditValues({ ...editValues, city: e.target.value })}
+                    className="w-full border rounded p-1"
+                  />
+                ) : (
+                  c.city
+                )}
+              </td>
+              <td className="border p-2">
+                {editingId === c.id ? (
+                  <input
+                    type="text"
+                    value={editValues.state}
+                    onChange={(e) => setEditValues({ ...editValues, state: e.target.value })}
+                    className="w-full border rounded p-1"
+                  />
+                ) : (
+                  c.state
+                )}
+              </td>
+              <td className="border p-2 flex gap-2">
+                {editingId === c.id ? (
+                  <>
+                    <button
+                      onClick={() => saveEdit(c.id)}
+                      className="bg-green-600 text-white px-3 py-1 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="bg-gray-400 text-white px-3 py-1 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => startEdit(c)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => router.delete(`/admin/locations/${c.id}`)}
+                      className="bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))}
