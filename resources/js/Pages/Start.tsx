@@ -1,8 +1,8 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function Welcome({ auth } : any) {
+export default function Welcome({ value, onChange, auth } : any) {
   const { data, setData, post, processing, errors } = useForm({
     location: '',
     number: '',
@@ -10,26 +10,53 @@ export default function Welcome({ auth } : any) {
     otp: '',
   });
 
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
+  const [query, setQuery] = useState(value || '');
+  const [results, setResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const sendOtp = async () => {
-    try {
-      await axios.post('/app/send-otp', { email: data.email });
-      setOtpSent(true);
-    } catch {
-      alert('Failed to send OTP');
-    }
+  // Debounce search
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (query.length > 0) {
+        axios.get('/locations/search', { params: { q: query } })
+          .then(res => setResults(res.data))
+          .catch(() => setResults([]));
+        setShowDropdown(true);
+      } else {
+        setResults([]);
+        setShowDropdown(false);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeout);
+  }, [query]);
+
+  const handleSelect = (location : any) => {
+    setQuery(location.name);
+    onChange(location.name);
+    setShowDropdown(false);
   };
 
-  const verifyOtp = async () => {
-    try {
-      await axios.post('/app/verify-otp', { otp: data.otp });
-      setOtpVerified(true);
-    } catch {
-      alert('Invalid OTP');
-    }
-  };
+  // const [otpSent, setOtpSent] = useState(false);
+  // const [otpVerified, setOtpVerified] = useState(false);
+
+  // const sendOtp = async () => {
+  //   try {
+  //     await axios.post('/app/send-otp', { email: data.email });
+  //     setOtpSent(true);
+  //   } catch {
+  //     alert('Failed to send OTP');
+  //   }
+  // };
+
+  // const verifyOtp = async () => {
+  //   try {
+  //     await axios.post('/app/verify-otp', { otp: data.otp });
+  //     setOtpVerified(true);
+  //   } catch {
+  //     alert('Invalid OTP');
+  //   }
+  // };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,13 +71,44 @@ export default function Welcome({ auth } : any) {
           <h1 className="text-xl font-bold mb-4 text-center">Welcome Form</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* location input */}
-            <input
+            {/* <input
               type="text"
               value={data.location}
               onChange={(e) => setData('location', e.target.value)}
               className="w-full border rounded p-2"
               placeholder="Type a location..."
-            />
+            /> */}
+            <div className="relative w-full">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  onChange(e.target.value);
+                }}
+                className="w-full border rounded p-2"
+                placeholder="Type colour name, hex, rgb, hsl..."
+              />
+              {showDropdown && results.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white border rounded shadow max-h-60 overflow-y-auto">
+                  {results.map((c : any) => (
+                    <li
+                      key={c.id}
+                      onClick={() => handleSelect(c)}
+                      className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between"
+                    >
+                      <span>{c.name}</span>
+                      {c.locality && (
+                        <span
+                          className="w-6 h-6 rounded-full border"
+                          style={{ backgroundColor: c.locality }}
+                        ></span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             {/* Number input */}
             <input
@@ -62,7 +120,7 @@ export default function Welcome({ auth } : any) {
             />
 
             {/* Email + OTP */}
-            {auth.user ? (
+            {/* {auth.user ? (
               <input
                 type="email"
                 value={data.email}
@@ -70,7 +128,7 @@ export default function Welcome({ auth } : any) {
                 className="w-full border rounded p-2 bg-gray-100"
               />
             ) : (
-              <>
+              <> */}
                 <input
                   type="email"
                   value={data.email}
@@ -78,7 +136,7 @@ export default function Welcome({ auth } : any) {
                   className="w-full border rounded p-2"
                   placeholder="Enter your email..."
                 />
-                {!otpSent && (
+                {/* {!otpSent && (
                   <button
                     type="button"
                     onClick={sendOtp}
@@ -106,12 +164,12 @@ export default function Welcome({ auth } : any) {
                   </>
                 )}
               </>
-            )}
+            )} */}
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={processing || (!auth.user && !otpVerified)}
+              // disabled={processing || (!auth.user && !otpVerified)}
               className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50"
             >
               {processing ? 'Submitting...' : 'Submit'}

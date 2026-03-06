@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EnquiryController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubAdminController;
@@ -32,12 +33,18 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
     Route::get('/admin/enquiries', [EnquiryController::class, 'index'])->name('admin.enquiries.index');
     Route::delete('/admin/enquiries/{enquiry}', [EnquiryController::class, 'destroy'])->name('admin.enquiries.destroy');
+
+    Route::get('/admin/locations', [LocationController::class, 'index'])->name('admin.locations.index');
+    Route::post('/admin/locations', [LocationController::class, 'store'])->name('admin.locations.store');
+    Route::put('/admin/locations/{colour}', [LocationController::class, 'update'])->name('admin.locations.update');
+    Route::delete('/admin/locations/{colour}', [LocationController::class, 'destroy'])->name('admin.locations.destroy');
 });
 
 Route::get('/enquiry',  function () {
     return Inertia::render('User/Enquiry');
 })->name('user.enquiry');
 Route::post('/enquiry', [EnquiryController::class, 'store']);
+Route::get('/locations/search', [LocationController::class, 'search'])->name('locations.search');
 // Route::get('/enquiry', [EnquiryController::class, 'create']);
 
 // Route::get('/report', function () {

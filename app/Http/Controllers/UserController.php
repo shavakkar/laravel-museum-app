@@ -59,9 +59,9 @@ class UserController extends Controller
         ]);
 
         // Ensure OTP verified for guests
-        if (!Auth::check() && !Session::get('otp_verified')) {
-            return response()->json(['success' => false, 'message' => 'OTP not verified'], 422);
-        }
+        // if (!Auth::check() && !Session::get('otp_verified')) {
+        //     return response()->json(['success' => false, 'message' => 'OTP not verified'], 422);
+        // }
 
         $userId = Auth::id();
 
