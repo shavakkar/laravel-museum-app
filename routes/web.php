@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
@@ -23,7 +24,7 @@ Route::get('/', function () {
 
 Route::post('/app/send-otp', [UserController::class, 'sendOtp'])->name('app.sendOtp');
 Route::post('/app/verify-otp', [UserController::class, 'verifyOtp'])->name('app.verifyOtp');
-Route::post('/app', [UserController::class, 'store'])->name('app.store');
+Route::post('/bookings', [BookingsController::class, 'store'])->name('booking.store');
 
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
@@ -38,6 +39,10 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('/admin/locations', [LocationController::class, 'store'])->name('admin.locations.store');
     Route::put('/admin/locations/{location}', [LocationController::class, 'update'])->name('admin.locations.update');
     Route::delete('/admin/locations/{location}', [LocationController::class, 'destroy'])->name('admin.locations.destroy');
+
+    Route::get('/admin/bookings', [BookingsController::class, 'index'])->name('admin.bookings.index');
+    Route::put('/admin/bookings/{booking}', [BookingsController::class, 'update'])->name('admin.bookings.update');
+    Route::delete('/admin/bookings/{booking}', [BookingsController::class, 'destroy'])->name('admin.locations.destroy');
 });
 
 Route::get('/enquiry',  function () {
