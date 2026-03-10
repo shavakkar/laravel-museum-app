@@ -10,7 +10,7 @@ export default function Welcome({ value, onChange, auth }: any) {
     otp: '',
   });
 
-  const [query, setQuery] = useState(value || '');
+  const [query, setQuery] = useState('');
   const [selected, setSelected] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -18,7 +18,7 @@ export default function Welcome({ value, onChange, auth }: any) {
   // Debounced search
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (query.trim().length > 0 && !showDropdown) {
+      if (query.trim().length > 0) {
         axios.get('/locations/search', { params: { q: query } })
           .then(res => {
             setResults(res.data);
@@ -38,12 +38,12 @@ export default function Welcome({ value, onChange, auth }: any) {
   }, [query]);
 
   const handleSelect = (location: any) => {
-    setQuery(location.name);
+    setSelected(location.name);           // show chosen value
     setData('location', location.name);
     if (onChange) onChange(location.name);
-    setQuery('');
+    setQuery('');                         // clear query so effect won’t refetch
     setResults([]);
-    setShowDropdown(false); 
+    setShowDropdown(false);
   };
 
   // OTP placeholders (disabled for now)
@@ -87,8 +87,9 @@ export default function Welcome({ value, onChange, auth }: any) {
                 type="text"
                 value={selected || query}
                 onChange={(e) => {
-                  setQuery(e.target.value);
-                  setData('location', e.target.value);   
+                  setQuery(e.target.value);           // drives search
+                  setSelected('');                    // clear selected when typing
+                  setData('location', e.target.value);
                   if (onChange) onChange(e.target.value);
                 }}
                 className="w-full border rounded p-2"
