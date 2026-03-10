@@ -41,9 +41,9 @@ class BookingsController extends Controller
         ]);
 
         // Ensure OTP verified for guests
-        if (!Auth::check() && !Session::get('otp_verified')) {
-            return response()->json(['success' => false, 'message' => 'OTP not verified'], 422);
-        }
+        // if (!Auth::check() && !Session::get('otp_verified')) {
+        //     return response()->json(['success' => false, 'message' => 'OTP not verified'], 422);
+        // }
 
         $userId = Auth::id();
 
@@ -90,23 +90,32 @@ class BookingsController extends Controller
      */
     public function update(Request $request, Booking $booking)
     {
-        $request->validate([
+
+
+        $validated = $request->validate([
             'user_id' => [
                 'nullable',
                 'string',
-                Rule::unique('bookings', 'user_id')
-                    ->ignore($booking->id)
-                    ->where(fn ($q) => $q->whereNot('user_id', 'Guest')),
+                // Rule::unique('bookings', 'user_id')
+                //     ->ignore($booking->id)
+                //     ->where(fn ($q) => $q->whereNot('user_id', 'Guest')),
             ],
             'email' => 'required|string',
             'location' => 'required|string',
             'number' => 'required|string',
         ]);
 
-        $booking->update($request->only('user_id', 'email', 'location', 'number'));
+        // Normalize values to avoid NULLs
+        // $validated['user_id'] = $validated['user_id'] ?? 'Guest';
+        // $validated['email']   = $validated['email'] ?? '';
+        // $validated['location'] = $validated['location'] ?? '';
+        // $validated['number']   = $validated['number'] ?? '';
+
+        $booking->update($validated);
 
         return redirect()->back()->with('success', 'Booking updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
