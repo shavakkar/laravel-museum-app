@@ -14,7 +14,7 @@ export default function Bookings({ bookings }: any) {
   const startEdit = (b: any) => {
     setEditingId(b.id);
     setData({
-      user_id: b.user_id || 'Guest',
+      user_id: b.user_id || null,
       email: b.email || '',
       location: b.location || '',
       number: b.number || '',

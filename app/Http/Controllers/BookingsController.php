@@ -90,26 +90,12 @@ class BookingsController extends Controller
      */
     public function update(Request $request, Booking $booking)
     {
-
-
         $validated = $request->validate([
-            'user_id' => [
-                'nullable',
-                'string',
-                // Rule::unique('bookings', 'user_id')
-                //     ->ignore($booking->id)
-                //     ->where(fn ($q) => $q->whereNot('user_id', 'Guest')),
-            ],
+            'user_id' => 'nullable|integer|exists:users,id',
             'email' => 'required|string',
             'location' => 'required|string',
-            'number' => 'required|string',
+            'number' => 'required|integer',
         ]);
-
-        // Normalize values to avoid NULLs
-        // $validated['user_id'] = $validated['user_id'] ?? 'Guest';
-        // $validated['email']   = $validated['email'] ?? '';
-        // $validated['location'] = $validated['location'] ?? '';
-        // $validated['number']   = $validated['number'] ?? '';
 
         $booking->update($validated);
 
