@@ -42,7 +42,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
     Route::get('/admin/bookings', [BookingsController::class, 'index'])->name('admin.bookings.index');
     Route::put('/admin/bookings/{booking}', [BookingsController::class, 'update'])->name('admin.bookings.update');
-    Route::delete('/admin/bookings/{booking}', [BookingsController::class, 'destroy'])->name('admin.locations.destroy');
+    Route::delete('/admin/bookings/{booking}', [BookingsController::class, 'destroy'])->name('admin.bookings.destroy');
 });
 
 Route::get('/enquiry',  function () {
