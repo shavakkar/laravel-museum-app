@@ -11,16 +11,16 @@ export default function Welcome({ value, onChange, auth }: any) {
   });
 
   const [query, setQuery] = useState(value || '');
+  const [selected, setSelected] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Debounced search
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (query.trim().length > 0) {
-        axios
-          .get('/locations/search', { params: { q: query } })
-          .then((res) => {
+      if (query.trim().length > 0 && !showDropdown) {
+        axios.get('/locations/search', { params: { q: query } })
+          .then(res => {
             setResults(res.data);
             setShowDropdown(true);
           })
@@ -40,8 +40,10 @@ export default function Welcome({ value, onChange, auth }: any) {
   const handleSelect = (location: any) => {
     setQuery(location.name);
     setData('location', location.name);
-    onChange(location.name);
-    setShowDropdown(false);
+    if (onChange) onChange(location.name);
+    setQuery('');
+    setResults([]);
+    setShowDropdown(false); 
   };
 
   // OTP placeholders (disabled for now)
@@ -83,10 +85,11 @@ export default function Welcome({ value, onChange, auth }: any) {
             <div className="relative w-full">
               <input
                 type="text"
-                value={query}
+                value={selected || query}
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  onChange(e.target.value);
+                  setData('location', e.target.value);   
+                  if (onChange) onChange(e.target.value);
                 }}
                 className="w-full border rounded p-2"
                 placeholder="Type a location..."
